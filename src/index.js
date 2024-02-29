@@ -13,3 +13,5 @@ connectDb()
     )
   })
   .catch((error) => console.log('Server Listing Error :: ', error))
+
+export default app

@@ -8,7 +8,9 @@
   },
   "type": "module",
   "scripts": {
-    "build": "node ./src/app.js"
+    "test": "nodemon ./src/index.js",
+    "build": "node ./src/index.js",
+    "vercel-build": "echo hello"
   },
   "keywords": [],
   "author": "",
