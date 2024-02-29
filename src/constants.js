@@ -1,3 +1,5 @@
+export const DB_NAME = 'urlshortner'
+
 export const accpetedProtocols = ['http', 'https']
 export const cookieOptions = {
   httpOnly: true,
