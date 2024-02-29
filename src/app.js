@@ -22,4 +22,16 @@ app.use('/user', JWTVerify, userRouter)
 app.use('/auth', authRouter)
 // app.use('/:shortId', redirectUrl)
 
+app.get('/', (req, res) => {
+  res.status(200).json({
+    statusCode: 200,
+    message: {
+      content: 'Server deployed Successfully ✅',
+      fromDeveloper:
+        'This is a server that generat short urls of any log links just create your account 😉 and provide a http or https url 😇 and surprise your friends 😎.',
+    },
+    createdAt: '29/02/2024',
+  })
+})
+
 export { app }
