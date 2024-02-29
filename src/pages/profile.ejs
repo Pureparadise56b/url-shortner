@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>profile</title>
+    <style>
+      table {
+        margin-top: 10px;
+        border-collapse: collapse;
+        width: 50%;
+      }
+
+      td,
+      th {
+        text-align: center;
+        border: 1px solid #dddddd;
+        padding: 8px;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      th {
+        background-color: #4caf50;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Welcome <%= user.userName %></h1>
+    <p>
+      Here you can generte a short url just enter a long url. Note - url must be
+      a type of http or https
+    </p>
+    <form action="/url/generate-shortId" method="post">
+      <label for="url">Enter your url</label>
+      <input type="text" name="url" id="url" placeholder="Enter a long url.." />
+      <button type="submit">Generate</button>
+    </form>
+    <a href="/auth/logout">Logout</a><br />
+    <a id="delete-account" href="/user/delete-account">delete account</a><br />
+    <a href="/user/update-password">update you password</a>
+
+    <p style="color: red"><%= locals.error %></p>
+    <table>
+      <tr>
+        <th>shortId</th>
+        <th>actual url</th>
+        <th>short url</th>
+      </tr>
+      <% user.urls.forEach(url => { %>
+      <tr>
+        <td><%= url.shortId %></td>
+        <td><%= url.url %></td>
+        <td>
+          <a
+            target="_blank"
+            href="<%= `${protocol}://${host}:${port}/${url.shortId}` %>"
+            ><%= `${protocol}://${host}/${url.shortId}` %></a
+          >
+        </td>
+        <td><a href="/url/delete-url/<%= url._id %>">delete</a></td>
+      </tr>
+      <% }) %>
+    </table>
+  </body>
+  <script>
+    const deleteAccount = document.querySelector('#delete-account')
+
+    deleteAccount.addEventListener('click', (e) => {
+      e.preventDefault()
+      const answer = confirm('Are want to delete your account?')
+      if (answer) {
+        window.location.href = e.srcElement.href
+      }
+    })
+  </script>
+</html>

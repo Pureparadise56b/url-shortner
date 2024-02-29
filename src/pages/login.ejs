@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+  </head>
+  <body>
+    <h1>User Login</h1>
+    <form action="/auth/login" method="post">
+      <input type="text" name="userName" placeholder="Enter username" />
+      <input type="password" name="password" id="password" />
+      <button type="submit">Login</button>
+    </form>
+    <p>Create a new account <a href="/auth/signup">signup</a></p>
+    <p style="color: red"><%= locals.error %></p>
+  </body>
+</html>
