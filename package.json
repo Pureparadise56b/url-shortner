@@ -8,7 +8,7 @@
   },
   "type": "module",
   "scripts": {
-    "start": "node ./src/index.js"
+    "build": "node ./src/app.js"
   },
   "keywords": [],
   "author": "",
