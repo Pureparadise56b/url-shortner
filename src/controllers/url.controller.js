@@ -1,5 +1,8 @@
 import { Url } from '../models/url.model.js'
 import { accpetedProtocols } from '../constants.js'
+import { AsyncHandler } from '../utils/AsyncHandler.util.js'
+import { ApiError } from '../utils/ApiError.util.js'
+import { ApiResponse } from '../utils/ApiResponse.util.js'
 
 const generateId = () => {
   const charecters =
@@ -14,50 +17,42 @@ const generateId = () => {
   return shortId
 }
 
-const getUrl = async (req, res, next) => {
-  try {
-    const { url } = req.body
+const generateShortUrl = AsyncHandler(async (req, res) => {
+  const { url } = req.body
 
-    if (!url) {
-      res.status(400).redirect(`/user/profile?error=Url is required`)
-      throw new Error('Url is required')
-    }
-
-    if (!accpetedProtocols.includes(url.split('://')[0])) {
-      res
-        .status(400)
-        .redirect(`/user/profile?error=Url must be a type of http or https`)
-      throw new Error('Url must be a type of http or https')
-    }
-
-    const shortId = generateId()
-
-    const data = await Url.create({
-      url,
-      shortId,
-      createdBy: req.user?.id,
-    })
-
-    res.status(200).redirect('/user/profile')
-  } catch (error) {
-    next(error)
+  if (!url) {
+    throw new ApiError(400, 'Url is required')
   }
-}
 
-const deleteUrl = async (req, res, next) => {
-  try {
-    const { id } = req.params
-
-    if (!id) {
-      throw new Error('id is required')
-    }
-
-    await Url.findOneAndDelete({ _id: id })
-
-    res.status(200).redirect('/user/profile')
-  } catch (error) {
-    next(error)
+  if (!accpetedProtocols.includes(url.split('://')[0])) {
+    throw new ApiError(400, 'Url must be a type of http or https')
   }
-}
 
-export { getUrl, deleteUrl }
+  const shortId = generateId()
+
+  const data = await Url.create({
+    url,
+    shortId,
+    createdBy: req.user?.id,
+  })
+
+  res
+    .status(200)
+    .json(new ApiResponse(201, data, 'shortUrl generated successfully'))
+})
+
+const deleteUrl = AsyncHandler(async (req, res) => {
+  const { id } = req.params
+
+  if (!id) {
+    throw new ApiErrorError(400, 'Id is required')
+  }
+
+  const deletedUrl = await Url.findOneAndDelete({ _id: id })
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, deletedUrl, 'Ulr deleted successfully'))
+})
+
+export { generateShortUrl, deleteUrl }

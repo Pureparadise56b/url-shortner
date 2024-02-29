@@ -2,7 +2,6 @@ import express from 'express'
 import cookieParser from 'cookie-parser'
 import urlRouter from './routes/url.route.js'
 import authRouter from './routes/auth.route.js'
-import staticRouter from './routes/static.route.js'
 import userRouter from './routes/user.route.js'
 import { JWTVerify } from './middlewares/auth.middleware.js'
 import { redirectUrl } from './controllers/redirect.controller.js'
@@ -18,11 +17,9 @@ app.set('views', './src/pages')
 app.set('view engine', 'ejs')
 
 // Routes
-
-app.use('/', staticRouter)
 app.use('/url', JWTVerify, urlRouter)
 app.use('/user', JWTVerify, userRouter)
 app.use('/auth', authRouter)
-app.use('/:shortId', redirectUrl)
+// app.use('/:shortId', redirectUrl)
 
 export { app }

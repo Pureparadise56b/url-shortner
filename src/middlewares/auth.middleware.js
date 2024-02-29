@@ -2,13 +2,15 @@ import JWT from 'jsonwebtoken'
 import { User } from '../models/user.model.js'
 import { generateTokens } from '../controllers/user.controller.js'
 import { cookieOptions } from '../constants.js'
+import { AsyncHandler } from '../utils/AsyncHandler.util.js'
+import { ApiError } from '../utils/ApiError.util.js'
 
-const JWTVerify = async (req, res, next) => {
+const JWTVerify = AsyncHandler(async (req, res, next) => {
   const access_token = req.cookies?.access_token
   const refresh_token = req.cookies?.refresh_token
 
   if (!access_token || !refresh_token) {
-    return res.redirect('/auth/login')
+    throw new ApiError(400, 'Tokens are required :: Login first')
   }
 
   const decodeData = JWT.verify(access_token, process.env.ACCESS_TOKEN_SECRET)
@@ -16,15 +18,12 @@ const JWTVerify = async (req, res, next) => {
   const user = await User.findById(decodeData?.id).select('-password')
 
   if (!user) {
-    return res
-      .clearCookie('access_token')
-      .clearCookie('refresh_token')
-      .redirect('/auth/login')
+    throw new ApiError(400, 'User not found :: Invalid access token')
   }
 
   if (decodeData.exp < Date.now()) {
     if (refresh_token !== user?.refreshToken) {
-      return res.redirect('/auth/login')
+      throw new ApiError(400, 'Invalid refresh token')
     } else {
       const { accessToken, refreshToken } = await generateTokens(user._id)
       res
@@ -38,6 +37,6 @@ const JWTVerify = async (req, res, next) => {
     req.user = user
     next()
   }
-}
+})
 
 export { JWTVerify }
